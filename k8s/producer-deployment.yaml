@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: producer
+  namespace: app
+
+spec:
+  replicas: 1
+
+  selector:
+    matchLabels:
+      app: producer
+
+  template:
+    metadata:
+      labels:
+        app: producer
+
+    spec:
+      containers:
+      - name: producer
+        image: event-app:latest
+        imagePullPolicy: IfNotPresent
+
+        command:
+          - python
+          - producer.py
+
+        env:
+          - name: PYTHONUNBUFFERED
+            value: "1"
+
+        envFrom:
+          - configMapRef:
+              name: event-app-config
