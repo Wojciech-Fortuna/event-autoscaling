@@ -5,9 +5,9 @@ metadata:
   namespace: app
 
 data:
-  KAFKA_BOOTSTRAP_SERVERS: "kafka:29092"
+  KAFKA_BOOTSTRAP_SERVERS: "kafka.kafka.svc.cluster.local:9092"
   TOPIC_NAME: "events-v2"
-  CONSUMER_GROUP: "event-processors"
+  CONSUMER_GROUP: "event-processors-k8s"
 
   MESSAGES_PER_SECOND: "100"
   BURST_MESSAGES_PER_SECOND: "3000"
