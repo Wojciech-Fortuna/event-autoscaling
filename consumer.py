@@ -1,9 +1,6 @@
 import os
 import time
-from dotenv import load_dotenv
 from confluent_kafka import Consumer, KafkaException
-
-load_dotenv()
 
 bootstrap_servers = os.getenv("KAFKA_BOOTSTRAP_SERVERS", "localhost:9092")
 topic = os.getenv("TOPIC_NAME", "events")
