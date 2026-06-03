@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kafka-exporter
+  namespace: monitoring
+  labels:
+    app: kafka-exporter
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kafka-exporter
+  template:
+    metadata:
+      labels:
+        app: kafka-exporter
+    spec:
+      containers:
+        - name: kafka-exporter
+          image: danielqsj/kafka-exporter:v1.7.0
+          args:
+            - --kafka.server=kafka-0.kafka-headless.kafka.svc.cluster.local:9092
+            - --web.listen-address=:9308
+            - --web.telemetry-path=/metrics
+            - --topic.filter=^events-v2$
+            - --group.filter=^event-processors-k8s$
+          ports:
+            - name: metrics
+              containerPort: 9308
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kafka-exporter
+  namespace: monitoring
+  labels:
+    app: kafka-exporter
+spec:
+  selector:
+    app: kafka-exporter
+  ports:
+    - name: metrics
+      port: 9308
+      targetPort: metrics
+
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: kafka-exporter
+  namespace: monitoring
+  labels:
+    release: kube-prometheus
+spec:
+  selector:
+    matchLabels:
+      app: kafka-exporter
+  endpoints:
+    - port: metrics
+      interval: 15s
