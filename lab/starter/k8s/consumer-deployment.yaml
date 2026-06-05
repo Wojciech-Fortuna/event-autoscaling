@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: consumer
+  namespace: app
+
+spec:
+  replicas: 1
+
+  selector:
+    matchLabels:
+      app: consumer
+
+  template:
+    metadata:
+      labels:
+        app: consumer
+
+    spec:
+      containers:
+      - name: consumer
+        image: event-app:latest
+        imagePullPolicy: IfNotPresent
+
+        command:
+          - python
+          - consumer.py
+
+        env:
+          - name: PYTHONUNBUFFERED
+            value: "1"
+
+        envFrom:
+          - configMapRef:
+              name: event-app-config
