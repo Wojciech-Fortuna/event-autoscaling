@@ -1,0 +1,56 @@
+# KEDA ScaledObject template — complete and save as `k8s/keda/consumer-scaledobject.yaml`
+
+# Alignment checklist (verify before applying):
+# - consumerGroup must match CONSUMER_GROUP in starter/k8s/configmap.yaml
+# - topic must match TOPIC_NAME in starter/k8s/configmap.yaml
+# - maxReplicaCount must not exceed the number of topic partitions (6)
+# - bootstrapServers must be reachable from the KEDA operator pods
+
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: consumer-scaler
+  namespace: app
+spec:
+  scaleTargetRef:
+    name: consumer
+
+  # TODO: set minimum replicas when there is no backlog
+  minReplicaCount: __TODO__
+
+  # TODO: set maximum replicas (must match topic partition count)
+  maxReplicaCount: __TODO__
+
+  # How often KEDA polls Kafka for lag (seconds)
+  pollingInterval: 15
+
+  # Wait time after last scale event before scaling down again (seconds)
+  cooldownPeriod: 30
+
+  advanced:
+    horizontalPodAutoscalerConfig:
+      behavior:
+        scaleDown:
+          stabilizationWindowSeconds: 0
+          policies:
+            - type: Percent
+              value: 100
+              periodSeconds: 15
+        scaleUp:
+          stabilizationWindowSeconds: 0
+
+  triggers:
+    - type: kafka
+      metadata:
+        # TODO: Kafka bootstrap address inside the cluster
+        bootstrapServers: __TODO__
+
+        # TODO: consumer group name (must match ConfigMap)
+        consumerGroup: __TODO__
+
+        topic: events-v2
+
+        # Default lag threshold; you will tune this in Task 4
+        lagThreshold: "500"
+
+        offsetResetPolicy: earliest
