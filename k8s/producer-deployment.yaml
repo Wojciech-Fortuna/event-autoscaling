@@ -3,7 +3,7 @@ kind: Deployment
 
 metadata:
   name: producer
-  namespace: app
+  namespace: event-autoscaling
 
 spec:
   replicas: 1
@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
       - name: producer
-        image: event-app:latest
+        image: 337462094945.dkr.ecr.us-east-1.amazonaws.com/event-app:eks
         imagePullPolicy: IfNotPresent
 
         command:
@@ -34,3 +34,11 @@ spec:
         envFrom:
           - configMapRef:
               name: event-app-config
+
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "128Mi"
+          limits:
+            cpu: "250m"
+            memory: "256Mi"

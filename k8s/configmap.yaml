@@ -2,14 +2,14 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: event-app-config
-  namespace: app
+  namespace: event-autoscaling
 
 data:
   KAFKA_BOOTSTRAP_SERVERS: "kafka.kafka.svc.cluster.local:9092"
-  TOPIC_NAME: "events-v2"
-  CONSUMER_GROUP: "event-processors-k8s"
+  TOPIC_NAME: "events-test-2"
+  CONSUMER_GROUP: "event-processors-autoscaled-test-2"
   MESSAGES_PER_SECOND: "20"
-  BURST_MESSAGES_PER_SECOND: "500"
-  BURST_DURATION_SECONDS: "30"
+  BURST_MESSAGES_PER_SECOND: "900"
+  BURST_DURATION_SECONDS: "240"
   MESSAGE_SIZE_BYTES: "1024"
-  PROCESSING_DELAY_MS: "50"
+  PROCESSING_DELAY_MS: "200"

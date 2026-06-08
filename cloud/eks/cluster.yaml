@@ -1,0 +1,32 @@
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+
+metadata:
+  name: kafka-keda-eks
+  region: us-east-1
+  version: "1.30"
+
+iam:
+  withOIDC: true
+
+managedNodeGroups:
+  - name: apps-ng
+
+    instanceType: t3.medium
+
+    desiredCapacity: 2
+    minSize: 1
+    maxSize: 6
+
+    volumeSize: 30
+
+    labels:
+      role: apps
+
+    tags:
+      k8s.io/cluster-autoscaler/enabled: "true"
+      k8s.io/cluster-autoscaler/kafka-keda-eks: "owned"
+
+    iam:
+      withAddonPolicies:
+        autoScaler: true
